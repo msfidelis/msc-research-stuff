@@ -6,12 +6,13 @@ COPY ./ .
 
 RUN go mod tidy
 
-RUN go build -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-FROM fidelissauro/apko-run:latest-arm64
 
-WORKDIR /root/
+FROM scratch
 
-COPY --from=builder /app/main .
+COPY --from=builder /app/main ./
+
+EXPOSE 8080
 
 CMD ["./main"]
