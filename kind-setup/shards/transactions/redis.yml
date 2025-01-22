@@ -1,0 +1,45 @@
+
+
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cache
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - shard: "shadow"
+            cluster: https://kubernetes.default.svc        
+          - shard: "01"
+            cluster: https://kubernetes.default.svc
+          - shard: "02"
+            cluster: https://kubernetes.default.svc
+          - shard: "03"
+            cluster: https://kubernetes.default.svc
+          - shard: "04"
+            cluster: https://kubernetes.default.svc                                    
+  template:
+    metadata:
+      name: cache-{{ shard }}
+    spec:
+      project: "transactions-shard-{{ shard }}"
+      source:
+        repoURL: "registry-1.docker.io"
+        chart: "bitnamicharts/redis"
+        targetRevision: "20.6.3" 
+        helm:
+          releaseName: cache-{{ shard }}
+          valuesObject:
+            metrics:
+              enabled: true
+
+
+      destination:
+        server: '{{ cluster }}'
+        namespace: shard-{{ shard }}
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+        automated: {}

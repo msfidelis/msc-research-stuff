@@ -46,7 +46,12 @@ func main() {
 		io.Copy(w, resp.Body)
 	}
 
+	healthCheckHandler := func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}
+
 	// Inicia o servidor
+	http.HandleFunc("/healthz", healthCheckHandler)
 	http.HandleFunc("/", proxyHandler)
 	port := os.Getenv("ROUTER_PORT")
 	log.Printf("HTTP Proxy running on port %s", port)

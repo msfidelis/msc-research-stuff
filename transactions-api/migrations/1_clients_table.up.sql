@@ -1,10 +1,10 @@
-CREATE TABLE IF NOT EXISTS clientes (
-    id_cliente UUID PRIMARY KEY,
-    limite INTEGER NOT NULL,
-    saldo INTEGER NOT NULL DEFAULT 0
+CREATE TABLE IF NOT EXISTS clients (
+    id_client UUID PRIMARY KEY,
+    limits INTEGER NOT NULL,
+    balance INTEGER NOT NULL DEFAULT 0
 );
 
-INSERT INTO clientes (id_cliente, limite, saldo) VALUES
+INSERT INTO clients (id_client, limits, balance) VALUES
 ('36291ce1-f1d2-4a62-b05b-4af6f62b05a3', 100000, 0),
 ('99a1dec3-aed8-47bb-8309-318c012c02fb', 80000, 0),
 ('9e85ffb9-dbd0-41ce-a4c1-d80ab0c53fb6', 1000000, 0),

@@ -1,7 +1,8 @@
 package main
 
 import (
-	"main/routes/clientes"
+	clients "main/routes/clients"
+	"main/routes/healthcheck"
 	"main/routines"
 
 	"github.com/gofiber/fiber/v2"
@@ -31,7 +32,8 @@ func main() {
 
 	// app.Use(pprof.New())
 
-	app.Get("/statements", clientes.Extrato)
-	app.Post("/transactions", clientes.NovaTransacao)
+	app.Get("/statements", clients.Statement)
+	app.Post("/transactions", clients.NewTransaction)
+	app.Get("/healthcheck", healthcheck.Probe)
 	app.Listen(":8080")
 }

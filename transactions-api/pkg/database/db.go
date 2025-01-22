@@ -28,13 +28,13 @@ func GetDBConn() *sql.DB {
 		connectionString := getDBUrl()
 		dbInstance, err = sql.Open("postgres", connectionString)
 		if err != nil {
-			log.Fatalf("Erro ao conectar com o banco de dados: %v", err)
+			log.Fatalf("Error in database connection: %v", err)
 		}
 
 		// Verifica a conexão
 		err = dbInstance.Ping()
 		if err != nil {
-			log.Fatalf("Erro ao estabelecer uma conexão com o banco de dados: %v", err)
+			log.Fatalf("Error: %v", err)
 		}
 	})
 	return dbInstance

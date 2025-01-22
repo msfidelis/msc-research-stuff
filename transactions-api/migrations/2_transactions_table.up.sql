@@ -1,8 +1,8 @@
-CREATE TABLE IF NOT EXISTS transacoes (
+CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
-    id_cliente UUID,
-    valor INTEGER NOT NULL,
-    tipo CHAR(1) NOT NULL CHECK (tipo IN ('c', 'd')),
-    descricao TEXT NOT NULL,
-    realizada_em TEXT NOT NULL
+    id_client UUID,
+    amount INTEGER NOT NULL,
+    type CHAR(1) NOT NULL CHECK (type IN ('c', 'd')),
+    description TEXT NOT NULL,
+    date TEXT NOT NULL
 );

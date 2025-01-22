@@ -1,5 +1,6 @@
 
 
+
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -23,7 +24,7 @@ spec:
     metadata:
       name: db-{{ shard }}
     spec:
-      project: "default"
+      project: "transactions-shard-{{ shard }}"
       source:
         repoURL: "registry-1.docker.io" # OCI Repository
         chart: "bitnamicharts/postgresql"
@@ -31,18 +32,21 @@ spec:
         helm:
           releaseName: db-{{ shard }}
           valuesObject:
+            auth:
+              username: fidelissauro
+              password: doutorequemtemdoutorado
+              database: transactions
             global:
               postgresql:
-                postgresqlUsername: fidelissauro
-                postgresqlPassword: doutorequemtemdoutorado
-                postgresqlDatabase: transactions
                 service:
                   type: ClusterIP
-                  port: 5432
+                  port: 5432 
 
 
       destination:
         server: '{{ cluster }}'
         namespace: shard-{{ shard }}
       syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
         automated: {}
