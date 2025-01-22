@@ -12,6 +12,7 @@ delete:
 	kind delete cluster
 
 terraform: 
+	terraform init
 	terraform apply --auto-approve
 
 argocd-password:
