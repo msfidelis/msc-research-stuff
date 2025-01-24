@@ -6,6 +6,7 @@ create: kind terraform chart argocd-password
 
 kind:
 	kind create cluster --config config.yaml
+
 	kubectl cluster-info --context kind-kind
 
 delete: 
@@ -16,7 +17,7 @@ terraform:
 	terraform apply --auto-approve
 
 argocd-password:
-	echo; kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+	echo; kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d ; echo
 
 chart:
 	helm package helm/sample --destination helm/

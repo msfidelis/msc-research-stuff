@@ -8,6 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	jsoniter "github.com/json-iterator/go"
+
+	"github.com/ansrivas/fiberprometheus/v2"
 )
 
 func main() {
@@ -29,6 +31,11 @@ func main() {
 	app.Use(compress.New(compress.Config{
 		Level: compress.LevelBestSpeed, // 1
 	}))
+
+	// Prometheus
+	prometheus := fiberprometheus.New("transaction-api")
+	prometheus.RegisterAt(app, "/metrics")
+	app.Use(prometheus.Middleware)
 
 	// app.Use(pprof.New())
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"main/entities"
 	"main/pkg/database"
+	"os"
 
 	"github.com/uptrace/bun"
 )
@@ -109,6 +110,15 @@ func Process(transaction entities.Transaction) (novoBalance int64, limit int64, 
 		return 0, 0, false, err
 	}
 
+	if os.Getenv("ENV") == "shadow" {
+		err = tx.Rollback()
+		if err != nil {
+			fmt.Printf("[%s] Erro ao fazer rollback da transação: %v\n", functionName, err)
+			return 0, 0, false, err
+		}
+		return novoBalance, client.Limit, inconsistency, nil
+	}
+
 	// Commit da Transação
 	err = tx.Commit()
 	if err != nil {
@@ -116,6 +126,5 @@ func Process(transaction entities.Transaction) (novoBalance int64, limit int64, 
 		return 0, 0, false, err
 	}
 
-	limit = client.Limit
 	return novoBalance, client.Limit, inconsistency, nil
 }

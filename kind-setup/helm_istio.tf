@@ -5,7 +5,7 @@ resource "helm_release" "istio_base" {
   namespace        = "istio-system"
   create_namespace = true
 
-  version = "1.20.2"
+  version = "1.22.8"
 
   depends_on = [
   ]
@@ -18,7 +18,12 @@ resource "helm_release" "istiod" {
   namespace        = "istio-system"
   create_namespace = true
 
-  version = "1.20.2"
+  version = "1.22.8"
+
+  set {
+    name  = "sidecarInjectorWebhook.rewriteAppHTTPProbe"
+    value = "false"
+  }
 
   depends_on = [
     helm_release.istio_base
@@ -33,7 +38,7 @@ resource "helm_release" "istio_ingress" {
   namespace        = "istio-system"
   create_namespace = true
 
-  version = "1.20.2"
+  version = "1.22.8"
 
   set {
     name  = "service.type"

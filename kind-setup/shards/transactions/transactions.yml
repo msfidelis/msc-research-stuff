@@ -14,9 +14,7 @@ spec:
           - shard: "02"
             cluster: https://kubernetes.default.svc
           - shard: "03"
-            cluster: https://kubernetes.default.svc
-          - shard: "04"
-            cluster: https://kubernetes.default.svc                                    
+            cluster: https://kubernetes.default.svc                                 
   template:
     metadata:
       name: transactions-{{ shard }}

@@ -9,6 +9,8 @@ spec:
   - {{ .Values.app.name }}
   hosts:
   - {{ .Values.app.istio.host }}
+  - {{ .Values.app.name }}
+  - {{ .Values.app.name }}.{{ .Values.app.namespace }}.svc.cluster.local
   http:
   - route:
     - destination:
