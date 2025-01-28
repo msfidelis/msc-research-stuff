@@ -1,46 +1,39 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: transactions
+  name: chip
   namespace: argocd
 spec:
   generators:
     - list:
         elements:
-          - shard: "shadow"
-            cluster: https://kubernetes.default.svc        
-          - shard: "01"
-            cluster: https://kubernetes.default.svc
-          - shard: "02"
-            cluster: https://kubernetes.default.svc
-          - shard: "03"
-            cluster: https://kubernetes.default.svc                                 
+        - cluster: https://kubernetes.default.svc                                       
   template:
     metadata:
-      name: transactions-{{ shard }}
+      name: chip
     spec:
-      project: "transactions-shard-{{ shard }}"
+      project: "default"
       source:
         repoURL: 'http://chartmuseum.chartmuseum.svc.cluster.local:8080'
         chart: sample
         targetRevision: 0.1.0
         helm:
-          releaseName: transactions-{{ shard }}
+          releaseName: chip
           valuesObject:
             app:
-              name: transactions
-              image: docker.io/fidelissauro/msc-transaction-api:latest
-              namespace: shard-{{ shard }}
+              name: chip
+              image: fidelissauro/chip:v1
+              namespace: chip
               iam: ""
               capacity:
-                requests:
+                requests: 
                   cpu: 100m
                   memory: 128Mi
                 limits: 
                   cpu: 200m
                   memory: 256Mi
                 autoscaling: {}
-                min: 1
+                min: 10
                 max: 10
               rollout:
                 strategy:
@@ -48,24 +41,19 @@ spec:
                     steps:
                     - setWeight: 0
                     - pause: { }
+                    - setWeight: 10
+                    - pause: { }
+                    - setWeight: 20
+                    - pause: { }
+                    - setWeight: 40
+                    - pause: { }
+                    - setWeight: 80
+                    - pause: { }                     
                     - setWeight: 100
               envs:
-                - name: DATABASE_HOST
-                  value: "db-{{ shard }}-postgresql.shard-{{ shard }}.svc.cluster.local"
-                - name: DATABASE_PORT
-                  value: "5432"
-                - name: DATABASE_USER
-                  value: "fidelissauro"
-                - name: DATABASE_PASSWORD
-                  value: "doutorequemtemdoutorado"
-                - name: DATABASE_DB
-                  value: "transactions"
-                - name: CACHE_HOST
-                  value: "cache-{{ shard }}-redis-replicas.shard-{{ shard }}.svc.cluster.local"
-                - name: CACHE_PORT
-                  value: "6379"
                 - name: VERSION
                   value: "v2"
+
               port:
                 name: http-web
                 port: 8080
@@ -79,7 +67,7 @@ spec:
                   # HTTP, HTTP2, GRPC, GRPC-WEB, MONGO, REDIS, MYSQL, TCP
                   protocol: HTTP 
                   port: 80
-                host: transactions{{ shard }}.cluster.io
+                host: chip.cluster.io
                 virtualService:
                   http:
                     enabled: true

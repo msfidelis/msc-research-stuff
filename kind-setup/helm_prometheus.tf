@@ -75,37 +75,37 @@ YAML
 
 }
 
-resource "kubectl_manifest" "podmonitor_generic" {
+# resource "kubectl_manifest" "podmonitor_generic" {
 
-  yaml_body = <<YAML
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: generic-stats-monitor
-  namespace: prometheus
-  labels:
-    monitoring: istio-proxies
-    release: istio
-spec:
-  selector:
-    matchExpressions:
-    - {key: istio-prometheus-ignore, operator: DoesNotExist}
-  namespaceSelector:
-    any: true
-  jobLabel: generic-stats
-  podMetricsEndpoints:
-  - path: /metrics
-    interval: 15s
-    relabelings:
-    - action: keep
-YAML
+#   yaml_body = <<YAML
+# apiVersion: monitoring.coreos.com/v1
+# kind: PodMonitor
+# metadata:
+#   name: generic-stats-monitor
+#   namespace: prometheus
+#   labels:
+#     monitoring: istio-proxies
+#     release: istio
+# spec:
+#   selector:
+#     matchExpressions:
+#     - {key: istio-prometheus-ignore, operator: DoesNotExist}
+#   namespaceSelector:
+#     any: true
+#   jobLabel: generic-stats
+#   podMetricsEndpoints:
+#   - path: /metrics
+#     interval: 15s
+#     relabelings:
+#     - action: keep
+# YAML
 
-  depends_on = [
-    helm_release.istio_base,
-    helm_release.prometheus
-  ]
+#   depends_on = [
+#     helm_release.istio_base,
+#     helm_release.prometheus
+#   ]
 
-}
+# }
 
 
 resource "kubectl_manifest" "servicemonitor_istio" {
@@ -163,32 +163,32 @@ YAML
 }
 
 
-resource "kubectl_manifest" "servicemonitor_istio_envoy" {
+# resource "kubectl_manifest" "servicemonitor_istio_envoy" {
 
-  yaml_body = <<YAML
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: istio-envoy-monitor
-  namespace: prometheus
-spec:
-  namespaceSelector:
-    any: true
-  selector:
-    matchExpressions:
-    - {key: app, operator: Exists}
-  endpoints:
-  - targetPort: 15090
-    interval: 15s
-    path: /stats/prometheus
-YAML
+#   yaml_body = <<YAML
+# apiVersion: monitoring.coreos.com/v1
+# kind: ServiceMonitor
+# metadata:
+#   name: istio-envoy-monitor
+#   namespace: prometheus
+# spec:
+#   namespaceSelector:
+#     any: true
+#   selector:
+#     matchExpressions:
+#     - {key: app, operator: Exists}
+#   endpoints:
+#   - targetPort: 15090
+#     interval: 15s
+#     path: /stats/prometheus
+# YAML
 
-  depends_on = [
-    helm_release.istio_base,
-    helm_release.prometheus
-  ]
+#   depends_on = [
+#     helm_release.istio_base,
+#     helm_release.prometheus
+#   ]
 
-}
+# }
 
 resource "kubectl_manifest" "podmonitor_stats_monitor" {
 

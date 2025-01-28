@@ -1,7 +1,7 @@
 app:
   name: nginx
   image: nginx:latest
-  namespace: nginx
+  namespace: test
   iam: ""
   capacity:
     requests: 
@@ -16,16 +16,38 @@ app:
   rollout:
     strategy:
       canary:
-        steps:
-        - setWeight: 20
-        - pause: { duration: 10 }
-        - setWeight: 40
-        - pause: { duration: 10 }
-        - setWeight: 60
-        - pause: { duration: 10 }
-        - setWeight: 80
-        - pause: { duration: 10 }
-        - setWeight: 100
+      #   steps:
+      #   - setWeight: 20
+      #   - pause: { duration: 10 }
+      #   - setWeight: 40
+      #   - pause: { duration: 10 }
+      #   - setWeight: 60
+      #   - pause: { duration: 10 }
+      #   - setWeight: 80
+      #   - pause: { duration: 10 }
+      #   - setWeight: 100
+
+    analysisTemplates:
+    - name: 'istio-success'
+      spec:
+        metrics:
+        - name: success-rate
+          interval: 2m
+          successCondition: result[0] >= 0.95
+          failureLimit: 1
+          provider:
+            prometheus:
+              address: <http://prometheus-kube-prometheus-prometheus.prometheus.svc.cluster.local:9090>
+              query: |
+                sum(irate(
+                  istio_requests_total{destination_service=~"nginx.test.svc.cluster.local",response_code!~"5.*"}[5m]
+                )) /
+                sum(irate(
+                  istio_requests_total{destination_service=~"nginx.test.svc.cluster.local"}[5m]
+                ))
+          count: 1 
+
+
   envs:
     - name: FOO
       value: "bar"
@@ -76,5 +98,6 @@ app:
       httpGet:
         path: /
         port: 80
+  
 
 kubernetesClusterDomain: cluster.local
