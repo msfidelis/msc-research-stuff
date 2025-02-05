@@ -52,7 +52,7 @@ spec:
                     - setWeight: 100
               envs:
                 - name: VERSION
-                  value: "v2"
+                  value: "v4"
 
               port:
                 name: http-web
@@ -67,7 +67,7 @@ spec:
                   # HTTP, HTTP2, GRPC, GRPC-WEB, MONGO, REDIS, MYSQL, TCP
                   protocol: HTTP 
                   port: 80
-                host: chip.cluster.io
+                host: chip.homelab.msfidelis.com.br
                 virtualService:
                   http:
                     enabled: true

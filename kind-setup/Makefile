@@ -6,7 +6,6 @@ create: kind terraform chart argocd-password
 
 kind:
 	kind create cluster --config config.yaml
-
 	kubectl cluster-info --context kind-kind
 
 delete: 

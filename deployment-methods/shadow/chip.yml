@@ -25,6 +25,7 @@ spec:
               image: fidelissauro/chip:v1
               namespace: chip
               iam: ""
+              version: v4
               capacity:
                 requests: 
                   cpu: 100m
@@ -40,19 +41,17 @@ spec:
                   canary:
                     steps:
                     - setWeight: 0
-                    - pause: {duration: 10s}
-                    - setWeight: 10
-                    - pause: {duration: 10s}
+                    - pause: { }
                     - setWeight: 20
-                    - pause: {duration: 10s}
+                    - pause: { }
                     - setWeight: 40
-                    - pause: {duration: 10s}
+                    - pause: { }
                     - setWeight: 80
-                    - pause: {duration: 10s}             
+                    - pause: { }                     
                     - setWeight: 100
               envs:
-                - name: VERSION
-                  value: "v5"
+                # - name: VERSION
+                #   value: "v2"
 
               port:
                 name: http-web
@@ -75,6 +74,11 @@ spec:
                       attempts: 1
                       perTryTimeout: 500ms
                       retryOn: refused-stream
+                  mirror:
+                    enabled: true
+                    host: chip.shadow.svc.cluster.local
+                    port: "8080"
+                    percent: 5
                 DestinationRule:
                   enabled: true
 

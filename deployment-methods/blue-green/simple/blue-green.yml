@@ -33,8 +33,8 @@ spec:
                   cpu: 200m
                   memory: 256Mi
                 autoscaling: {}
-                min: 10
-                max: 10
+                min: 5
+                max: 5
               rollout:
                 strategy:
                     blueGreen: 
@@ -43,7 +43,7 @@ spec:
                       autoPromotionEnabled: false
               envs:
                 - name: VERSION
-                  value: "v6"
+                  value: "v1"
 
               port:
                 name: http-web
@@ -58,7 +58,7 @@ spec:
                   # HTTP, HTTP2, GRPC, GRPC-WEB, MONGO, REDIS, MYSQL, TCP
                   protocol: HTTP 
                   port: 80
-                host: chip.cluster.io
+                host: chip.homelab.msfidelis.com.br
                 virtualService:
                   http:
                     enabled: true

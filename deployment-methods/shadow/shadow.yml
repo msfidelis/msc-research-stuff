@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: chip
+  name: chip-shadow
   namespace: argocd
 spec:
   generators:
@@ -10,7 +10,7 @@ spec:
         - cluster: https://kubernetes.default.svc                                       
   template:
     metadata:
-      name: chip
+      name: chip-shadow
     spec:
       project: "default"
       source:
@@ -18,13 +18,14 @@ spec:
         chart: sample
         targetRevision: 0.1.0
         helm:
-          releaseName: chip
+          releaseName: chip-shadow
           valuesObject:
             app:
               name: chip
               image: fidelissauro/chip:v1
-              namespace: chip
+              namespace: shadow
               iam: ""
+              version: v4
               capacity:
                 requests: 
                   cpu: 100m
@@ -33,26 +34,16 @@ spec:
                   cpu: 200m
                   memory: 256Mi
                 autoscaling: {}
-                min: 10
-                max: 10
+                min: 1
+                max: 1
               rollout:
                 strategy:
                   canary:
-                    steps:
-                    - setWeight: 0
-                    - pause: {duration: 10s}
-                    - setWeight: 10
-                    - pause: {duration: 10s}
-                    - setWeight: 20
-                    - pause: {duration: 10s}
-                    - setWeight: 40
-                    - pause: {duration: 10s}
-                    - setWeight: 80
-                    - pause: {duration: 10s}             
+                    steps:                   
                     - setWeight: 100
               envs:
-                - name: VERSION
-                  value: "v5"
+                # - name: VERSION
+                #   value: "v2"
 
               port:
                 name: http-web
@@ -67,7 +58,7 @@ spec:
                   # HTTP, HTTP2, GRPC, GRPC-WEB, MONGO, REDIS, MYSQL, TCP
                   protocol: HTTP 
                   port: 80
-                host: chip.homelab.msfidelis.com.br
+                host: chip-shadow.homelab.msfidelis.com.br
                 virtualService:
                   http:
                     enabled: true
