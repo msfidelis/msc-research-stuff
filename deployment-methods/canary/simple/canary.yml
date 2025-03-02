@@ -12,7 +12,7 @@ spec:
     metadata:
       name: chip
     spec:
-      project: "default"
+      project: "chip"
       source:
         repoURL: 'http://chartmuseum.chartmuseum.svc.cluster.local:8080'
         chart: sample
@@ -24,6 +24,7 @@ spec:
               name: chip
               image: fidelissauro/chip:v1
               namespace: chip
+              version: "v6"
               iam: ""
               capacity:
                 requests: 
@@ -50,9 +51,6 @@ spec:
                     - setWeight: 80
                     - pause: { }                     
                     - setWeight: 100
-              envs:
-                - name: VERSION
-                  value: "v4"
 
               port:
                 name: http-web
@@ -72,9 +70,9 @@ spec:
                   http:
                     enabled: true
                     retries:
-                      attempts: 1
+                      attempts: 2
                       perTryTimeout: 500ms
-                      retryOn: refused-stream
+                      retryOn: connect-failure,refused-stream,unavailable,cancelled,503
                 DestinationRule:
                   enabled: true
 

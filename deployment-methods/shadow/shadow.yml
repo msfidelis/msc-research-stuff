@@ -12,7 +12,7 @@ spec:
     metadata:
       name: chip-shadow
     spec:
-      project: "default"
+      project: "chip"
       source:
         repoURL: 'http://chartmuseum.chartmuseum.svc.cluster.local:8080'
         chart: sample
@@ -25,7 +25,7 @@ spec:
               image: fidelissauro/chip:v1
               namespace: shadow
               iam: ""
-              version: v4
+              version: v8
               capacity:
                 requests: 
                   cpu: 100m
@@ -66,8 +66,6 @@ spec:
                       attempts: 1
                       perTryTimeout: 500ms
                       retryOn: refused-stream
-                DestinationRule:
-                  enabled: true
 
               prometheus:
                 scrape: "true"

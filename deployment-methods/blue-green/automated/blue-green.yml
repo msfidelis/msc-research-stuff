@@ -12,7 +12,7 @@ spec:
     metadata:
       name: chip
     spec:
-      project: "default"
+      project: "chip"
       source:
         repoURL: 'http://chartmuseum.chartmuseum.svc.cluster.local:8080'
         chart: sample
@@ -24,6 +24,7 @@ spec:
               name: chip
               image: fidelissauro/chip:v1
               namespace: chip
+              version: "v3"
               iam: ""
               capacity:
                 requests: 
@@ -75,7 +76,7 @@ spec:
                   spec:
                     metrics:
                     - name: success-rate
-                      interval: 2m
+                      interval: 1m
                       successCondition: result[0] >= 0.95
                       failureLimit: 1
                       provider:
