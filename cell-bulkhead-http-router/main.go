@@ -8,6 +8,28 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+)
+
+var (
+	requestsCounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "shard_router_requests_total",
+			Help: "Total number of HTTP requests",
+		},
+		[]string{"shard"},
+	)
+	responseCounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "shard_router_responses_total",
+			Help: "Total number of HTTP responses",
+		},
+		[]string{"shard", "status"},
+	)
 )
 
 func main() {
@@ -23,7 +45,7 @@ func main() {
 			http.Error(w, "Invalid target URL", http.StatusBadRequest)
 			return
 		}
-
+		requestsCounter.WithLabelValues(shardURL).Inc()
 		proxyReq, err := http.NewRequest(r.Method, targetURL.String(), r.Body)
 		if err != nil {
 			http.Error(w, "Failed to create request", http.StatusInternalServerError)
@@ -42,6 +64,9 @@ func main() {
 		for k, v := range resp.Header {
 			w.Header()[k] = v
 		}
+
+		responseCounter.WithLabelValues(shardURL, strconv.Itoa(resp.StatusCode)).Inc()
+
 		w.WriteHeader(resp.StatusCode)
 		io.Copy(w, resp.Body)
 	}
@@ -50,10 +75,22 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 	}
 
-	// Inicia o servidor
-	http.HandleFunc("/healthz", healthCheckHandler)
-	http.HandleFunc("/", proxyHandler)
+	// Prometheus
+	reg := prometheus.NewRegistry()
+
+	reg.MustRegister(
+		collectors.NewGoCollector(),
+		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
+		requestsCounter,
+		responseCounter,
+	)
+
+	mux := http.NewServeMux()
+	mux.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
+	mux.HandleFunc("/healthz", healthCheckHandler)
+	mux.HandleFunc("/", proxyHandler)
+
 	port := os.Getenv("ROUTER_PORT")
 	log.Printf("HTTP Proxy running on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, mux))
 }
