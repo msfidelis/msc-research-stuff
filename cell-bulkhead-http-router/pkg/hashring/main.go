@@ -1,7 +1,7 @@
 package hashring
 
 import (
-	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/binary"
 	"sort"
 	"strconv"
@@ -42,7 +42,7 @@ func (ring *ConsistentHashRing) AddNode(nodeID string) {
 // Calcula o hash do tenant e a converte para uint64.
 func hashKey(s string) uint64 {
 	s = strings.ToLower(s)
-	hash := sha256.New()
+	hash := sha512.New()
 	hash.Write([]byte(s))
 	hashBytes := hash.Sum(nil)
 	return binary.BigEndian.Uint64(hashBytes[:8])
